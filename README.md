@@ -19,62 +19,40 @@ An intelligent email processing system that automatically generates personalized
 5. **LangChain AI Agent for Email Sending**: Utilizes LangChain framework to create an agent that sends emails through SMTP
 6. **Send & Log**: Send approved emails and maintain records
 
-## Local Setup Instructions
+## Setup Instructions
 
 1. Clone this repository
 2. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
-3. Set up environment variables in `.env` file:
+3. Set up your environment variables in `.env` file:
    ```
    OPENAI_API_KEY=your_openai_api_key
    EMAIL_USERNAME=your_email_username
    EMAIL_PASSWORD=your_email_password
    EMAIL_SMTP_SERVER=smtp.gmail.com
    EMAIL_SMTP_PORT=587
-   EMAIL_FALLBACK_TO_DEMO=true # set to false to disable fallback mode
    ```
-
-   ### Gmail Authentication Setup
-   If using Gmail with 2-Factor Authentication (which is highly recommended), you must:
-   1. Generate an App Password at: https://myaccount.google.com/apppasswords
-   2. Select "Mail" as the app and choose a device
-   3. Use the generated 16-character password as your EMAIL_PASSWORD
-   4. Your regular Gmail password will not work with 2FA enabled
 
 4. Run the app:
    ```
    python -m email_agent.main
    ```
 
-## Streamlit Cloud Deployment
+## Testing Email Functionality
 
-1. Fork this repository to your GitHub account
-2. Go to [Streamlit Cloud](https://share.streamlit.io/)
-3. Sign in with your GitHub account
-4. Click "New app"
-5. Select your forked repository
-6. Set the main file path to `email_agent/app/main.py`
-7. Click "Deploy!"
-8. In the app settings, add your secrets:
-   - Copy the contents of `.streamlit/secrets.toml.template`
-   - Paste them into the Streamlit Cloud secrets manager
-   - Replace the placeholder values with your actual credentials
+To test if your email credentials work correctly:
 
-## Demo Mode
+```
+python email_agent/test_email.py
+```
 
-The application includes a fallback "Demo Mode" that will simulate email sending when:
-- Email authentication fails (wrong username/password)
-- SMTP connection errors occur
-- Other email sending issues arise
+This will:
+1. Try to send a test email using the direct method
+2. Try to send a test email using the LangChain agent
 
-When in Demo Mode:
-- Emails are not actually sent to recipients
-- The process is simulated and logged
-- You'll see "DEMO MODE" in the UI and in logs
-
-To force Demo Mode always, set `EMAIL_FALLBACK_TO_DEMO=true` in your .env file or Streamlit secrets.
+If you see "Email successfully sent" in the output, your email configuration is working correctly.
 
 ## Project Structure
 

@@ -1,60 +1,157 @@
 import smtplib
+import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import Dict, Any, Optional
-import os
+from email_agent.utils.email_agent import EmailAgentTool
 
-def send_email_agent(
-    recipient_email: str,
-    subject: str,
-    body: str,
-    sender_email: Optional[str] = None,
-    sender_password: Optional[str] = None,
-    smtp_server: Optional[str] = None,
-    smtp_port: Optional[int] = None
-) -> bool:
+class EmailSender:
     """
-    Send an email using the configured SMTP settings.
-
-    Args:
-        recipient_email: Email address of the recipient
-        subject: Email subject
-        body: Email body content
-        sender_email: Optional sender email (defaults to environment variable)
-        sender_password: Optional sender password (defaults to environment variable)
-        smtp_server: Optional SMTP server (defaults to environment variable)
-        smtp_port: Optional SMTP port (defaults to environment variable)
-
-    Returns:
-        bool: True if email was sent successfully, False otherwise
+    Utility for sending email responses.
     """
-    try:
-        # Use environment variables if not provided
-        sender_email = sender_email or os.getenv("EMAIL_DEFAULT_SENDER")
-        sender_password = sender_password or os.getenv("EMAIL_PASSWORD")
-        smtp_server = smtp_server or os.getenv("EMAIL_SMTP_SERVER")
-        smtp_port = int(smtp_port or os.getenv("EMAIL_SMTP_PORT", "587"))
 
-        if not all([sender_email, sender_password, smtp_server, smtp_port]):
-            raise ValueError("Missing required email configuration")
+    def __init__(
+        self,
+        smtp_server: str,
+        smtp_port: int,
+        username: str,
+        password: str,
+        default_sender: str = None
+    ):
+        """
+        Initialize the email sender.
 
-        # Create message
-        msg = MIMEMultipart()
-        msg['From'] = sender_email
-        msg['To'] = recipient_email
-        msg['Subject'] = subject
+        Args:
+            smtp_server: SMTP server address
+            smtp_port: SMTP server port
+            username: Email account username
+            password: Email account password
+            default_sender: Default sender email address (if different from username)
+        """
+        self.smtp_server = smtp_server
+        self.smtp_port = smtp_port
+        self.username = username
+        self.password = password
+        self.default_sender = default_sender or username
 
-        # Add body
-        msg.attach(MIMEText(body, 'plain'))
+        # Initialize the LangChain email agent
+        self.email_agent = EmailAgentTool(
+            smtp_server=smtp_server,
+            smtp_port=smtp_port,
+            username=username,
+            password=password,
+            default_sender=default_sender
+        )
 
-        # Create SMTP session
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()
-            server.login(sender_email, sender_password)
-            server.send_message(msg)
+    def send_email(
+        self,
+        to_address: str,
+        subject: str,
+        body: str,
+        cc_addresses: Optional[list] = None,
+        from_address: Optional[str] = None,
+        include_html: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Send an email using the LangChain agent.
 
-        return True
+        Args:
+            to_address: Recipient email address
+            subject: Email subject
+            body: Email body content (can be HTML)
+            cc_addresses: List of CC email addresses
+            from_address: Sender email address (if different from default)
+            include_html: Whether to include HTML formatting
 
-    except Exception as e:
-        print(f"Error sending email: {str(e)}")
-        return False
+        Returns:
+            Dictionary with status and any error message
+        """
+        try:
+            # Ensure to_address is valid or use a default
+            if not to_address or '@' not in to_address:
+                to_address = "danielle@pawlife.co"  # Use default recipient if none provided
+
+            # Ensure from_address is valid
+            if not from_address or '@' not in from_address:
+                from_address = self.default_sender
+
+            # Print debug info
+            print(f"Sending email via LangChain agent from {from_address} to {to_address}")
+            print(f"Using SMTP server: {self.smtp_server}:{self.smtp_port}")
+            print(f"Subject: {subject}")
+            print(f"Email body length: {len(body)} characters")
+
+            # Use the LangChain agent to send the email
+            result = self.email_agent.process_and_send_email(
+                to_address=to_address,
+                subject=subject,
+                body=body,
+                cc_addresses=cc_addresses
+            )
+
+            # Log the result for debugging
+            print(f"Email sending result: {result}")
+
+            # Return result
+            return result
+
+        except Exception as e:
+            error_message = str(e)
+            print(f"Email error: {error_message}")
+
+            # Print more detailed traceback
+            import traceback
+            traceback.print_exc()
+
+            return {
+                "status": "error",
+                "message": f"Failed to send email: {error_message}"
+            }
+
+    def _strip_html(self, html_text: str) -> str:
+        """
+        Remove HTML tags for plain text version.
+
+        Args:
+            html_text: Text with potential HTML tags
+
+        Returns:
+            Plain text without HTML tags
+        """
+        # This is a very simple implementation
+        # A more robust solution would use a library like BeautifulSoup
+        import re
+        text = re.sub('<[^<]+?>', '', html_text)
+        return text
+
+    @classmethod
+    def from_env(cls):
+        """
+        Create an EmailSender from environment variables.
+
+        Environment variables needed:
+        - EMAIL_SMTP_SERVER
+        - EMAIL_SMTP_PORT
+        - EMAIL_USERNAME
+        - EMAIL_PASSWORD
+        - EMAIL_DEFAULT_SENDER (optional)
+
+        Returns:
+            EmailSender instance
+        """
+        smtp_server = os.environ.get("EMAIL_SMTP_SERVER", "smtp.gmail.com")
+        smtp_port = int(os.environ.get("EMAIL_SMTP_PORT", 587))
+        username = os.environ.get("EMAIL_USERNAME", "b2b.cik.corp@gmail.com")
+        password = os.environ.get("EMAIL_PASSWORD", "pepelotteadroitepepelotteagauche1114")
+        default_sender = os.environ.get("EMAIL_DEFAULT_SENDER", username)
+
+        if not all([smtp_server, username, password]):
+            raise ValueError("Missing required environment variables for email sending")
+
+        return cls(
+            smtp_server=smtp_server,
+            smtp_port=smtp_port,
+            username=username,
+            password=password,
+            default_sender=default_sender
+        )
