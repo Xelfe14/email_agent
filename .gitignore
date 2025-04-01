@@ -49,3 +49,8 @@ data/vectorstore/
 # Logs
 *.log
 logs/
+
+# Sensitive files
+*.json
+*.pyc
+.DS_Store
