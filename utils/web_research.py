@@ -5,6 +5,21 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.agents import Tool
 
+def research_company(extracted_info: Dict[str, Any], api_key: str, max_queries: int = 3) -> str:
+    """
+    Research a company using the WebResearcher class.
+
+    Args:
+        extracted_info: Dictionary of extracted entities from email
+        api_key: OpenAI API key
+        max_queries: Maximum number of search queries to generate
+
+    Returns:
+        Research summary about the company
+    """
+    researcher = WebResearcher(api_key=api_key)
+    return researcher.research_company(extracted_info, max_queries=max_queries)
+
 class WebResearcher:
     """
     Performs web research to gather additional context about companies and individuals.
