@@ -1,5 +1,5 @@
 streamlit==1.32.0
-langchain==0.1.0
+langchain>=0.0.342,<0.1.0
 langchain-openai==0.0.5
 langchain-community==0.0.14
 langchain-experimental==0.0.43
