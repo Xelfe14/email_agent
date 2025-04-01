@@ -7,6 +7,22 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import Document
 
+def get_similar_examples(query_email: str, api_key: str, vectorstore_path: str = None, k: int = 3) -> List[Dict[str, Any]]:
+    """
+    Get similar email examples using the RAGRetriever class.
+
+    Args:
+        query_email: The email text to find similar examples for
+        api_key: OpenAI API key
+        vectorstore_path: Path to the vectorstore
+        k: Number of similar examples to retrieve
+
+    Returns:
+        List of similar email examples
+    """
+    retriever = RAGRetriever(api_key=api_key, vectorstore_path=vectorstore_path)
+    return retriever.retrieve_similar_examples(query_email, k=k)
+
 class RAGRetriever:
     """
     Retrieval-Augmented Generation (RAG) for finding similar email-response pairs
