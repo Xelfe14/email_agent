@@ -7,10 +7,14 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, Tuple
 from dotenv import load_dotenv
-from utils.email_parser import extract_entities
-from utils.rag_retriever import get_similar_examples
-from utils.web_research import research_company
+from utils.email_parser import extract_entities, EmailParser
+from utils.rag_retriever import get_similar_examples, RAGRetriever
+from utils.web_research import research_company, WebResearcher
 from utils.email_sender import send_email_agent
+from utils.email_agent import EmailAgentTool
+from utils.google_sheets_logger import GoogleSheetsLogger
+from models.response_composer import ResponseComposer
+from data.sample_data import get_sample_emails
 
 # Initialize session state variables first
 if "extracted_info" not in st.session_state:
