@@ -109,13 +109,13 @@ print(f"EMAIL_SMTP_SERVER exists: {'EMAIL_SMTP_SERVER' in os.environ}")
 print(f"EMAIL_PASSWORD exists: {'EMAIL_PASSWORD' in os.environ}")
 
 # Import our modules
-from utils.email_parser import EmailParser
-from utils.rag_retriever import RAGRetriever
-from utils.web_research import WebResearcher
-from utils.email_sender import EmailSender
-from utils.google_sheets_logger import GoogleSheetsLogger
-from models.response_composer import ResponseComposer
-from data.sample_data import get_sample_emails
+from ..utils.email_parser import EmailParser
+from ..utils.rag_retriever import RAGRetriever
+from ..utils.web_research import WebResearcher
+from ..utils.email_sender import EmailSender
+from ..utils.google_sheets_logger import GoogleSheetsLogger
+from ..models.response_composer import ResponseComposer
+from ..data.sample_data import get_sample_emails
 
 # Load OpenAI API key
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
