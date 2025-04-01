@@ -109,13 +109,13 @@ print(f"EMAIL_SMTP_SERVER exists: {'EMAIL_SMTP_SERVER' in os.environ}")
 print(f"EMAIL_PASSWORD exists: {'EMAIL_PASSWORD' in os.environ}")
 
 # Import our modules
-from email_agent.utils.email_parser import EmailParser
-from email_agent.utils.rag_retriever import RAGRetriever
-from email_agent.utils.web_research import WebResearcher
-from email_agent.utils.email_sender import EmailSender
-from email_agent.utils.google_sheets_logger import GoogleSheetsLogger
-from email_agent.models.response_composer import ResponseComposer
-from email_agent.data.sample_data import get_sample_emails
+from email_agent_copy.utils.email_parser import EmailParser
+from email_agent_copy.utils.rag_retriever import RAGRetriever
+from email_agent_copy.utils.web_research import WebResearcher
+from email_agent_copy.utils.email_sender import EmailSender
+from email_agent_copy.utils.google_sheets_logger import GoogleSheetsLogger
+from email_agent_copy.models.response_composer import ResponseComposer
+from email_agent_copy.data.sample_data import get_sample_emails
 
 # Load OpenAI API key
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -141,20 +141,20 @@ sheets_logger = None
 
 if OPENAI_API_KEY:
     email_parser = EmailParser(api_key=OPENAI_API_KEY)
-    rag_retriever = RAGRetriever(api_key=OPENAI_API_KEY, vectorstore_path="email_agent/data/vectorstore")
+    rag_retriever = RAGRetriever(api_key=OPENAI_API_KEY, vectorstore_path="email_agent_copy/data/vectorstore")
     web_researcher = WebResearcher(api_key=OPENAI_API_KEY)
     response_composer = ResponseComposer(api_key=OPENAI_API_KEY)
 
     # Initialize vectorstore with sample data if needed
-    if not os.path.exists(os.path.join("email_agent/data/vectorstore", "index.faiss")):
+    if not os.path.exists(os.path.join("email_agent_copy/data/vectorstore", "index.faiss")):
         try:
-            os.makedirs("email_agent/data/vectorstore", exist_ok=True)
+            os.makedirs("email_agent_copy/data/vectorstore", exist_ok=True)
             sample_emails_df = get_sample_emails()
             rag_retriever.ingest_email_data(sample_emails_df)
             st.session_state.data_initialized = True
         except Exception as e:
             st.error(f"Error initializing vectorstore: {e}")
-            st.info("If this error persists, try deleting the email_agent/data/vectorstore directory and restarting the application.")
+            st.info("If this error persists, try deleting the email_agent_copy/data/vectorstore directory and restarting the application.")
 
 # Initialize email sender with values from environment
 email_smtp_server = os.environ.get("EMAIL_SMTP_SERVER", "smtp.gmail.com")
