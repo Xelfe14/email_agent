@@ -32,6 +32,20 @@ if "step" not in st.session_state:
 if "status_message" not in st.session_state:
     st.session_state["status_message"] = ""
 
+# Configure secrets
+secrets = st.secrets
+
+# Set up environment variables from secrets
+os.environ["OPENAI_API_KEY"] = secrets["OPENAI_API_KEY"]
+os.environ["EMAIL_SMTP_SERVER"] = secrets["email"]["SMTP_SERVER"]
+os.environ["EMAIL_SMTP_PORT"] = str(secrets["email"]["SMTP_PORT"])
+os.environ["EMAIL_USERNAME"] = secrets["email"]["USERNAME"]
+os.environ["EMAIL_PASSWORD"] = secrets["email"]["PASSWORD"]
+os.environ["EMAIL_DEFAULT_SENDER"] = secrets["email"]["DEFAULT_SENDER"]
+os.environ["GOOGLE_CREDENTIALS_PATH"] = secrets["google"]["CREDENTIALS_PATH"]
+os.environ["GOOGLE_SHEETS_SPREADSHEET_ID"] = secrets["google"]["SHEETS_SPREADSHEET_ID"]
+os.environ["GOOGLE_SHEETS_SHEET_NAME"] = secrets["google"]["SHEETS_SHEET_NAME"]
+
 # Set page config at the very beginning
 st.set_page_config(
     page_title="AI Email Agent",
