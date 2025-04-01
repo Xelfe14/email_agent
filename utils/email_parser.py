@@ -4,6 +4,20 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 
+def extract_entities(email_text: str, api_key: str) -> Dict[str, Any]:
+    """
+    Extract entities from email text using the EmailParser class.
+
+    Args:
+        email_text: The text of the email to parse
+        api_key: OpenAI API key
+
+    Returns:
+        Dictionary of extracted entities
+    """
+    parser = EmailParser(api_key)
+    return parser.parse_email(email_text)
+
 class EmailParser:
     """
     Extracts structured information from email text using LLM.
