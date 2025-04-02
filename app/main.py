@@ -312,7 +312,7 @@ def process_email():
         st.session_state.status_message = "✅ Response generated successfully!"
 
         # Rerun to show the processed state UI
-        st.experimental_rerun()
+        st.rerun()
 
     except Exception as e:
         st.error(f"Error during processing: {str(e)}")
@@ -482,14 +482,14 @@ elif st.session_state.step == "processed":
                     success = send_email()
                     if success:
                         st.session_state.step = "sent"
-                        st.experimental_rerun()
+                        st.rerun()
             elif not EMAIL_CONFIGURED:
                 st.warning("Email sending not configured")
 
         with col2:
             if st.button("✏️ Edit Response", use_container_width=True, key="edit_response_btn"):
                 st.session_state.step = "review"
-                st.experimental_rerun()
+                st.rerun()
 
         with col3:
             if st.button("🔄 Start Over", use_container_width=True, key="start_over_btn"):
@@ -500,7 +500,7 @@ elif st.session_state.step == "processed":
                         st.session_state[key] = None
                 st.session_state.step = "input"
                 st.session_state.status_message = ""
-                st.experimental_rerun()
+                st.rerun()
 
         # Close the container div
         st.markdown("</div>", unsafe_allow_html=True)
@@ -552,7 +552,7 @@ elif st.session_state.step == "processed":
         st.error("No processed data found. Please go back and process an email.")
         if st.button("⬅️ Back to Input"):
             st.session_state.step = "input"
-            st.experimental_rerun()
+            st.rerun()
 
 elif st.session_state.step == "review":
     st.subheader("Review and Approve Response")
@@ -645,7 +645,7 @@ elif st.session_state.step == "review":
                         success = send_email()
                         if success:
                             st.session_state.step = "sent"
-                            st.experimental_rerun()
+                            st.rerun()
                 elif not EMAIL_CONFIGURED:
                     st.warning("Email sending not configured")
 
@@ -658,7 +658,7 @@ elif st.session_state.step == "review":
                             st.session_state[key] = None
                     st.session_state.step = "input"
                     st.session_state.status_message = ""
-                    st.experimental_rerun()
+                    st.rerun()
 
             with action_col3:
                 if st.session_state.status_message:
@@ -693,7 +693,7 @@ elif st.session_state.step == "sent":
                     st.session_state[key] = None
             st.session_state.step = "input"
             st.session_state.status_message = ""
-            st.experimental_rerun()
+            st.rerun()
 
 # Footer
 st.divider()
