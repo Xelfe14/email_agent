@@ -83,7 +83,7 @@ class RAGRetriever:
         </Output>
 
         <Rules>
-        - Don't include a "Subject: " line in the style draft.
+        - Never include the Subject of the email in the draft.
         - The draft should be well-structured but incomplete, as we will add specific details about the company later.
         </Rules>
 
