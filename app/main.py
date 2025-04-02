@@ -2,6 +2,11 @@ import os
 import sys
 from pathlib import Path
 
+# Fix for SQLite version issue in Streamlit Cloud
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 # Add the parent directory to the Python path
 parent_dir = str(Path(__file__).parent.parent)
 sys.path.append(parent_dir)

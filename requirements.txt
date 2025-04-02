@@ -16,3 +16,4 @@ google-auth-oauthlib>=1.1.0
 tiktoken>=0.5.2
 duckduckgo-search>=7.5.5
 chromadb==0.3.29
+pysqlite3-binary==0.5.1.3380300
