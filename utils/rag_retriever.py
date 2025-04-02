@@ -59,8 +59,15 @@ class RAGRetriever:
                 print("A new vectorstore will be created when data is ingested.")
 
         self.style_prompt = ChatPromptTemplate.from_template("""
-        You are a professional investment fund email writer. Your task is to generate a draft response based on the style, tone, and structure of similar past responses, but adapted for the new inquiry.
+        <Context>
+        You are a professional investment fund email writer.
+        </Context>
 
+        <Task>
+        Your task is to generate a draft response based on the style, tone, and structure of similar past responses, but adapted for the new inquiry.
+        </Task>
+
+        <Input>
         New inquiry to respond to:
         {new_email}
 
@@ -69,10 +76,17 @@ class RAGRetriever:
 
         Similar historical email-response pair examples:
         {similar_examples}
+        </Input>
 
+        <Output>
         Based on the style and tone of these historical responses, draft a partial response to the new inquiry. Focus on matching the writing style, tone, greeting style, sign-off style, and overall structure.
+        </Output>
 
-        The draft should be well-structured but incomplete, as we will add specific details about the company later.
+        <Rules>
+        - Don't include a "Subject: " line in the style draft.
+        - The draft should be well-structured but incomplete, as we will add specific details about the company later.
+        </Rules>
+
         """)
 
     def ingest_email_data(self, emails_df: pd.DataFrame) -> None:
