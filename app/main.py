@@ -1,4 +1,11 @@
 import os
+import sys
+from pathlib import Path
+
+# Add the parent directory to the Python path
+parent_dir = str(Path(__file__).parent.parent)
+sys.path.append(parent_dir)
+
 import streamlit as st
 import pandas as pd
 import json
@@ -105,22 +112,27 @@ load_dotenv(verbose=True)  # Add verbose=True for debugging
 print(f"Current working directory: {os.getcwd()}")
 print("Environment variables loaded:")
 print(f"OPENAI_API_KEY exists: {'OPENAI_API_KEY' in os.environ}")
+print(f"OPENAI_API_KEY value: {os.getenv('OPENAI_API_KEY', 'Not found')[:10]}...")  # Print first 10 chars for security
 print(f"EMAIL_SMTP_SERVER exists: {'EMAIL_SMTP_SERVER' in os.environ}")
 print(f"EMAIL_PASSWORD exists: {'EMAIL_PASSWORD' in os.environ}")
 
 # Import our modules
-from ..utils.email_parser import EmailParser
-from ..utils.rag_retriever import RAGRetriever
-from ..utils.web_research import WebResearcher
-from ..utils.email_sender import EmailSender
-from ..utils.google_sheets_logger import GoogleSheetsLogger
-from ..models.response_composer import ResponseComposer
-from ..data.sample_data import get_sample_emails
+from utils.email_parser import EmailParser
+from utils.rag_retriever import RAGRetriever
+from utils.web_research import WebResearcher
+from utils.email_sender import EmailSender
+from utils.google_sheets_logger import GoogleSheetsLogger
+from models.response_composer import ResponseComposer
+from data.sample_data import get_sample_emails
 
 # Load OpenAI API key
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
     st.error("OPENAI_API_KEY environment variable not set. Please set it in the .env file.")
+    st.stop()  # Stop the app if no API key is found
+elif OPENAI_API_KEY.startswith("your-new"):
+    st.error("Please replace the placeholder API key in your .env file with your actual OpenAI API key.")
+    st.stop()  # Stop the app if using placeholder key
 
 # Get email credentials
 EMAIL_CONFIGURED = True  # Hard-code this to True to always enable email sending
@@ -141,20 +153,22 @@ sheets_logger = None
 
 if OPENAI_API_KEY:
     email_parser = EmailParser(api_key=OPENAI_API_KEY)
-    rag_retriever = RAGRetriever(api_key=OPENAI_API_KEY, vectorstore_path="email_agent_copy/data/vectorstore")
+    vectorstore_path = "data/vectorstore"
+
+    # Always initialize vectorstore in Streamlit Cloud
+    try:
+        os.makedirs(vectorstore_path, exist_ok=True)
+        rag_retriever = RAGRetriever(api_key=OPENAI_API_KEY, vectorstore_path=vectorstore_path)
+        sample_emails_df = get_sample_emails()
+        rag_retriever.ingest_email_data(sample_emails_df)
+        st.session_state.data_initialized = True
+        print("Vectorstore initialized successfully")
+    except Exception as e:
+        st.error(f"Error initializing vectorstore: {e}")
+        print(f"Vectorstore initialization error: {e}")
+
     web_researcher = WebResearcher(api_key=OPENAI_API_KEY)
     response_composer = ResponseComposer(api_key=OPENAI_API_KEY)
-
-    # Initialize vectorstore with sample data if needed
-    if not os.path.exists(os.path.join("email_agent_copy/data/vectorstore", "index.faiss")):
-        try:
-            os.makedirs("email_agent_copy/data/vectorstore", exist_ok=True)
-            sample_emails_df = get_sample_emails()
-            rag_retriever.ingest_email_data(sample_emails_df)
-            st.session_state.data_initialized = True
-        except Exception as e:
-            st.error(f"Error initializing vectorstore: {e}")
-            st.info("If this error persists, try deleting the email_agent_copy/data/vectorstore directory and restarting the application.")
 
 # Initialize email sender with values from environment
 email_smtp_server = os.environ.get("EMAIL_SMTP_SERVER", "smtp.gmail.com")
@@ -169,7 +183,10 @@ email_sender = EmailSender(
     smtp_port=email_smtp_port,
     username=email_username,
     password=email_password,
-    default_sender=email_default_sender
+    default_sender=email_default_sender,
+    sender_name="Group 9",
+    sender_title="Investment Associate",
+    company_name="Conchita's Impact Ventures"
 )
 
 # Print email configuration for debugging
@@ -202,19 +219,19 @@ if "data_initialized" not in st.session_state:
     st.session_state.data_initialized = False
 
 # Helper functions for parallel processing
-def process_style_branch(email_text: str, extracted_info: Dict[str, Any]) -> str:
-    """Process the style and context branch."""
+def process_rag_branch(email_text: str, extracted_info: Dict[str, Any]) -> str:
+    """Process the RAG branch."""
     if not rag_retriever:
         return "RAG Retriever not initialized. Please check your OpenAI API key."
 
     try:
-        st.info("Processing style branch...")
+        st.info("Processing RAG branch...")
         result = rag_retriever.generate_style_based_draft(email_text, extracted_info)
-        st.info("✓ Style branch completed")
+        st.info("✓ RAG branch completed")
         return result
     except Exception as e:
-        st.error(f"Style branch error: {str(e)}")
-        return f"Error generating style draft: {str(e)}"
+        st.error(f"RAG branch error: {str(e)}")
+        return f"Error generating RAG draft: {str(e)}"
 
 def process_research_branch(extracted_info: Dict[str, Any]) -> str:
     """Process the external data research branch."""
@@ -262,7 +279,7 @@ def process_email():
                 st.session_state.similar_examples = similar_pairs
 
             # Generate style draft
-            style_draft = process_style_branch(email_text, extracted_info)
+            style_draft = process_rag_branch(email_text, extracted_info)
             st.session_state.style_draft = style_draft
             progress_bar.progress(50)
             st.success("✓ Style analysis completed")
@@ -351,7 +368,6 @@ def send_email():
         if result["status"] == "success":
             st.session_state.status_message = f"✅ {result['message']}"
             st.success(f"Email sent successfully to {recipient}")
-            st.warning(f"⚠️ A real email was sent to {recipient}")
 
             # Log to Google Sheets if configured
             if SHEETS_CONFIGURED and sheets_logger:
@@ -654,12 +670,11 @@ elif st.session_state.step == "sent":
     # Create a container to display success information
     with st.container():
         st.subheader("Email has been sent")
-        st.warning("⚠️ A real email was sent to the recipient's inbox.")
 
     # Show recipient information
     if st.session_state.extracted_info and 'sender_email' in st.session_state.extracted_info:
         recipient = st.session_state.extracted_info.get('sender_email', '')
-        st.warning(f"Your response was sent to {recipient}")
+        st.success(f"Your response was sent to {recipient}")
 
     # Display summary of the sent message
     if st.session_state.final_response:

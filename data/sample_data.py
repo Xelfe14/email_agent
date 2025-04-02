@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-from ..utils.email_parser import EmailParser
 from typing import Dict, List, Any
 
 def get_sample_emails() -> pd.DataFrame:
