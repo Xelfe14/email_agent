@@ -9,6 +9,7 @@ python-dotenv>=1.0.0
 faiss-cpu>=1.7.4
 numpy>=1.26.3
 pandas>=2.1.4
+sqlite3 >= 3.35.0
 pydantic>=2.5.3
 beautifulsoup4>=4.12.2
 requests>=2.31.0
