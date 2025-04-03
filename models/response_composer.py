@@ -21,8 +21,11 @@ class ResponseComposer:
         )
 
         self.template = """
+        <Context>
         You are a professional and experienced investment fund representative. Your task is to compose a complete, personalized email response to a potential investment opportunity.
+        </Context>
 
+        <Input>
         EXTRACTED INFORMATION FROM THE ORIGINAL EMAIL:
         {extracted_info}
 
@@ -31,22 +34,24 @@ class ResponseComposer:
 
         RESEARCH FINDINGS ABOUT THE COMPANY:
         {research_data}
+        </Input>
 
-        INSTRUCTIONS:
+        <Task>
         1. Create a polished, complete email response that maintains the style and tone from the draft.
         2. Incorporate relevant details from the research findings to demonstrate knowledge about the company and industry.
         3. Address the specific request or ask mentioned in the original email.
         4. Be specific and personalized, referencing the company name, founder names, and industry details where appropriate.
         5. Include a clear next step or call to action if appropriate.
         6. Keep the response professional but warm.
-
+        </Task>
+        <Rules>
         SIGNATURE INSTRUCTIONS (VERY IMPORTANT):
         - End the email with ONLY a simple sign-off like "Best regards," or "Kind regards," or "Best,"
         - DO NOT add any signature block
         - DO NOT include placeholders like [Your Name], [Your Title], [Your Contact Information]
         - DO NOT include any name, title, or company information
-        - The system will automatically add the appropriate signature block later
-
+        </Rules>
+        <Examples>
         Example of correct ending:
         "I look forward to our discussion.
 
@@ -59,8 +64,11 @@ class ResponseComposer:
         [Your Name]
         [Your Title]
         [Your Contact Information]"
+        </Examples>
 
+        <Output>
         COMPLETE EMAIL RESPONSE:
+        </Output>
         """
 
         self.prompt = ChatPromptTemplate.from_template(self.template)
