@@ -39,7 +39,7 @@ class WebResearcher:
         )
 
         # Set up search tool
-        self.search_tool = DuckDuckGoSearchResults()
+        self.search_tool = DuckDuckGoSearchResults(backend="auto")
 
         # Create tools list
         self.tools = [
