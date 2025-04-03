@@ -15,7 +15,7 @@ class ResponseComposer:
             api_key: OpenAI API key
         """
         self.llm = ChatOpenAI(
-            model_name="gpt-3.5-turbo",
+            model_name="gpt-4o-mini",
             temperature=0.7,
             api_key=api_key
         )
@@ -39,7 +39,7 @@ class ResponseComposer:
         4. Be specific and personalized, referencing the company name, founder names, and industry details where appropriate.
         5. Include a clear next step or call to action if appropriate.
         6. Keep the response professional but warm.
-        7. Never Sign off
+        7. Sign off politelly without sender's information (i.e don't indicate [your name] or [your title] or [your company])
 
         COMPLETE EMAIL RESPONSE:
         """
