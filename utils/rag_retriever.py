@@ -85,6 +85,25 @@ class RAGRetriever:
         <Rules>
         - Never include the Subject of the email in the draft.
         - The draft should be well-structured but incomplete, as we will add specific details about the company later.
+        SIGNATURE INSTRUCTIONS (VERY IMPORTANT):
+        - End the email with ONLY a simple sign-off like "Best regards," or "Kind regards," or "Best,"
+        - DO NOT add any signature block
+        - DO NOT include placeholders like [Your Name], [Your Title], [Your Contact Information]
+        - DO NOT include any name, title, or company information
+        - The system will automatically add the appropriate signature block later
+
+        Example of correct ending:
+        "I look forward to our discussion.
+
+        Best regards,"
+
+        Example of INCORRECT ending (DO NOT USE):
+        "I look forward to our discussion.
+
+        Best regards,
+        [Your Name]
+        [Your Title]
+        [Your Contact Information]
         </Rules>
 
         """)
