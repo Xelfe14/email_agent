@@ -39,7 +39,7 @@ class ResponseComposer:
         4. Be specific and personalized, referencing the company name, founder names, and industry details where appropriate.
         5. Include a clear next step or call to action if appropriate.
         6. Keep the response professional but warm.
-        7. Sign off appropriately.
+        7. Never Sign off
 
         COMPLETE EMAIL RESPONSE:
         """
