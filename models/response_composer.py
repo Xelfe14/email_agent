@@ -39,7 +39,26 @@ class ResponseComposer:
         4. Be specific and personalized, referencing the company name, founder names, and industry details where appropriate.
         5. Include a clear next step or call to action if appropriate.
         6. Keep the response professional but warm.
-        7. Sign off politelly without sender's information (i.e don't indicate [your name] or [your title] or [your company])
+
+        SIGNATURE INSTRUCTIONS (VERY IMPORTANT):
+        - End the email with ONLY a simple sign-off like "Best regards," or "Kind regards," or "Best,"
+        - DO NOT add any signature block
+        - DO NOT include placeholders like [Your Name], [Your Title], [Your Contact Information]
+        - DO NOT include any name, title, or company information
+        - The system will automatically add the appropriate signature block later
+
+        Example of correct ending:
+        "I look forward to our discussion.
+
+        Best regards,"
+
+        Example of INCORRECT ending (DO NOT USE):
+        "I look forward to our discussion.
+
+        Best regards,
+        [Your Name]
+        [Your Title]
+        [Your Contact Information]"
 
         COMPLETE EMAIL RESPONSE:
         """
