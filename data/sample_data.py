@@ -47,10 +47,7 @@ def get_sample_emails() -> pd.DataFrame:
 
             Best regards,
 
-            Michael Thompson
-            Principal
-            Venture Capital Partners
-            michael@vcpartners.com
+
             """,
 
             "industry": "Fintech",
@@ -99,10 +96,7 @@ def get_sample_emails() -> pd.DataFrame:
 
             Looking forward to connecting,
 
-            Jennifer Wilson
-            Partner
-            TechGrowth Ventures
-            jennifer@techgrowth.vc
+
             """,
 
             "industry": "Supply Chain/Manufacturing",
@@ -151,10 +145,7 @@ def get_sample_emails() -> pd.DataFrame:
 
             Regards,
 
-            Robert Chen
-            Associate
-            GreenTech Investments
-            robert@greentechinv.com
+
             """,
 
             "industry": "CleanTech",
@@ -203,10 +194,7 @@ def get_sample_emails() -> pd.DataFrame:
 
             Looking forward to connecting,
 
-            Samantha Lee
-            Investment Director
-            Nexus Ventures
-            samantha@nexusventures.com
+
             """,
 
             "industry": "Cybersecurity",
